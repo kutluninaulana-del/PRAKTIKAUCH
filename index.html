@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Платформа для девелопера</title>
+
+  <!-- Скрипт для моментального применения темы ДО отрисовки DOM (Часть 4.2) -->
+  <script>
+    (function() {
+      var savedTheme = localStorage.getItem('theme');
+      if (savedTheme) {
+        document.documentElement.setAttribute('data-theme', savedTheme);
+      } else {
+        var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+      }
+      var savedAccent = localStorage.getItem('accent');
+      if (savedAccent) {
+        document.documentElement.style.setProperty('--accent', savedAccent);
+      }
+    })();
+  </script>
+
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Часть 5.2: Skip-link для доступности -->
+  <a href="#main-content" class="skip-link">Перейти к основному контенту</a>
+
+  <header class="header">
+    <button class="burger-btn" aria-label="Открыть меню">
+      <span></span><span></span><span></span>
+    </button>
+    <h1>Панель девелопера</h1>
+
+    <div class="theme-controls">
+      <label for="theme-select" class="sr-only">Выбор темы</label>
+      <select id="theme-select">
+        <option value="light">Светлая</option>
+        <option value="dark">Темная</option>
+        <option value="contrast">Контрастная</option>
+      </select>
+
+      <label for="accent-picker" class="sr-only">Акцентный цвет</label>
+      <input type="color" id="accent-picker" value="#0d6efd">
+    </div>
+  </header>
+
+  <nav class="sidebar">
+    <h2>Меню</h2>
+    <ul>
+      <li><a href="#properties">Объекты</a></li>
+      <li><a href="#buildings">Корпуса</a></li>
+      <li><a href="#apartments">Квартиры</a></li>
+    </ul>
+    <address>
+      <a href="mailto:info@dev.ru">info@dev.ru</a>
+    </address>
+  </nav>
+
+  <main class="main" id="main-content">
+
+    <section id="filters-section" class="filters-panel">
+      <h2>Фильтры и поиск</h2>
+      <form id="filters-form">
+        <div class="filter-group">
+          <label for="search-input">Поиск по названию:</label>
+          <input type="search" id="search-input" placeholder="Введите название...">
+        </div>
+
+        <div class="filter-group">
+          <label for="status-select">Статус:</label>
+          <select id="status-select">
+            <option value="all">Все</option>
+            <option value="Проект">Проект</option>
+            <option value="Строительство">Строительство</option>
+            <option value="Сдан">Сдан</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <span>Приоритет:</span>
+          <label class="custom-checkbox">
+            <input type="checkbox" value="Высокий" class="priority-filter">
+            <span>Высокий</span>
+          </label>
+          <label class="custom-checkbox">
+            <input type="checkbox" value="Средний" class="priority-filter">
+            <span>Средний</span>
+          </label>
+        </div>
+
+        <div class="filter-group">
+          <span>Вид:</span>
+          <label class="custom-radio">
+            <input type="radio" name="view" value="grid" checked>
+            <span>Сетка</span>
+          </label>
+          <label class="custom-radio">
+            <input type="radio" name="view" value="list">
+            <span>Список</span>
+          </label>
+        </div>
+
+        <button type="reset" class="btn-reset">Сбросить</button>
+      </form>
+    </section>
+
+    <section id="properties">
+      <h2>Объекты недвижимости</h2>
+      <section id="properties-list" class="grid-list"></section>
+    </section>
+
+    <section id="buildings">
+      <h2>Корпуса</h2>
+      <section id="buildings-list" class="grid-list"></section>
+    </section>
+    <section id="apartments">
+      <h2>Квартиры</h2>
+      <div class="table-wrapper">
+        <table id="apartments-table">
+          <caption>Список квартир и статус продаж</caption>
+          <thead>
+            <tr>
+              <th scope="col" data-sort="number">Номер <span class="sort-arrow">↕</span></th>
+              <th scope="col" data-sort="area">Площадь <span class="sort-arrow">↕</span></th>
+              <th scope="col" data-sort="price">Цена <span class="sort-arrow">↕</span></th>
+              <th scope="col">Статус</th>
+            </tr>
+          </thead>
+          <tbody id="apartments-body"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Часть 5.1: ТАБЫ -->
+    <section id="tabs-section">
+      <h2>Информация</h2>
+      <div class="tabs" role="tablist" aria-label="Информационные вкладки">
+        <button class="tab active" role="tab" aria-selected="true" aria-controls="tab-1" id="tab-btn-1">Описание</button>
+        <button class="tab" role="tab" aria-selected="false" aria-controls="tab-2" id="tab-btn-2">Характеристики</button>
+        <button class="tab" role="tab" aria-selected="false" aria-controls="tab-3" id="tab-btn-3">Отзывы</button>
+      </div>
+      <div class="tab-panel active" role="tabpanel" id="tab-1" aria-labelledby="tab-btn-1">
+        <p>Платформа для девелопера — это удобный инструмент управления объектами недвижимости.</p>
+      </div>
+      <div class="tab-panel" role="tabpanel" id="tab-2" aria-labelledby="tab-btn-2" hidden>
+        <p>Всего объектов: 15, корпусов: 15, квартир: 15. Данные обновляются в реальном времени.</p>
+      </div>
+      <div class="tab-panel" role="tabpanel" id="tab-3" aria-labelledby="tab-btn-3" hidden>
+        <p>«Отличная платформа, удобно работать с данными» — Иванов И.И.</p>
+      </div>
+    </section>
+
+    <!-- Часть 5.1: АККОРДЕОН -->
+    <section id="accordion-section">
+      <h2>Вопросы и ответы</h2>
+      <div class="accordion">
+        <div class="accordion-item">
+          <button class="accordion-header" aria-expanded="false">
+            Как добавить новый объект?
+            <span class="accordion-icon">+</span>
+          </button>
+          <div class="accordion-content" hidden>
+            <p>Обратитесь в административную панель и заполните форму создания объекта.</p>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <button class="accordion-header" aria-expanded="false">
+            Как экспортировать данные?
+            <span class="accordion-icon">+</span>
+          </button>
+          <div class="accordion-content" hidden>
+            <p>Используйте кнопку "Экспорт" в правом верхнем углу таблицы.</p>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <button class="accordion-header" aria-expanded="false">
+            Как работает сортировка?
+            <span class="accordion-icon">+</span>
+          </button>
+          <div class="accordion-content" hidden>
+            <p>Кликните по заголовку колонки таблицы для сортировки по возрастанию или убыванию.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <aside class="aside">
+    <h2>Статистика</h2>
+    <p>Данные обновляются в реальном времени.</p>
+  </aside>
+
+  <footer class="footer">
+    <p>&copy; 2024 Платформа для девелопера</p>
+  </footer>
+
+  <div id="modal-overlay" class="modal-overlay">
+    <div class="modal-window" role="dialog" aria-modal="true">
+      <header class="modal-header">
+        <h3 id="modal-title">Заголовок</h3>
+        <button class="modal-close" aria-label="Закрыть">&times;</button>
+      </header>
+      <div class="modal-body" id="modal-body"></div>
+      <footer class="modal-footer">
+        <button class="btn-primary modal-action">Подробнее</button>
+        <button class="btn-secondary modal-close-btn">Закрыть</button>
+      </footer>
+    </div>
+  </div>
+
+  <!-- Часть 5.1: Контейнер для toast -->
+  <div id="toast-container" aria-live="polite"></div>
+  <script src="data.js"></script>
+  <script src="renderer.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>
